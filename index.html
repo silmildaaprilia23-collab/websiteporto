@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sil Milda Aprilia – Visual Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;500;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --purple-light: #d9b3ff;
+      --purple-mid:   #9b59d0;
+      --purple-dark:  #3b1f6b;
+      --purple-hero:  #b07fe0;
+      --white:        #ffffff;
+      --gray-soft:    #f3f0f8;
+      --gray-text:    #555;
+      --card-bg:      #f9f7fd;
+      --card-border:  #e8e0f5;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --nav-h:        72px;
+      --radius-pill:  999px;
+      --radius-card:  20px;
+      --transition:   0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--white);
+      color: var(--purple-dark);
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      pointer-events: none;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 24px rgba(155,89,208,0.08);
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .nav-link {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--purple-dark);
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      transition: background 0.25s, color 0.25s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: rgba(176,127,224,0.18);
+      color: var(--purple-mid);
+    }
+    .nav-link.active {
+      background: rgba(176,127,224,0.25);
+    }
+
+    /* Hamburger – mobile only */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      border: none;
+      background: none;
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--purple-dark);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      padding: 16px 0 24px;
+      gap: 4px;
+      z-index: 999;
+      box-shadow: 0 8px 32px rgba(155,89,208,0.1);
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+    .mobile-menu.open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .mobile-menu .nav-link {
+      padding: 14px 32px;
+      border-radius: 0;
+      font-size: 16px;
+    }
+
+    /* ============================================================
+       SECTION WRAPPER
+    ============================================================ */
+    section { width: 100%; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ============================================================
+   HERO SECTION
+============================================================ */
+ 
+/* ── Wrapper ── */
+#home{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+  padding-top:var(--nav-h);
+ 
+  /* Warna dasar: ungu sangat muda, persis seperti desain */
+  background:#ede5fc;
+}
+ 
+/* ════════════════════════════════
+   LAYER 1 — Blob ungu (background)
+   3 rectangle diblur membentuk efek
+   ungu indah kiri-tengah-kanan
+════════════════════════════════ */
+.hero-blob-wrap{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:0;
+}
+ 
+/* ✏️ EDIT: blob kiri */
+.hero-blob-left{
+  position:absolute;
+  width:52%; height:120%;
+  left:-8%; top:-10%;
+  background:#aa5ef0;
+  filter:blur(120px);
+  opacity:0.78;
+  border-radius:38% 62% 58% 42% / 45% 55% 45% 55%;
+}
+ 
+/* ✏️ EDIT: blob tengah atas */
+.hero-blob-mid{
+  position:absolute;
+  width:60%; height:75%;
+  left:20%; top:-20%;
+  background:#bf82f7;
+  filter:blur(110px);
+  opacity:0.65;
+  border-radius:50%;
+}
+ 
+/* ✏️ EDIT: blob kanan */
+.hero-blob-right{
+  position:absolute;
+  width:52%; height:120%;
+  right:-8%; top:-10%;
+  background:#aa5ef0;
+  filter:blur(120px);
+  opacity:0.78;
+  border-radius:62% 38% 42% 58% / 55% 45% 55% 45%;
+}
+ 
+/* ════════════════════════════════
+   LAYER 2 — Teks Judul
+   Posisi: dari atas 18% biar nggak
+   ke bawah dan nggak tertutup badge.
+   z-index 1 = di BELAKANG foto.
+════════════════════════════════ */
+.hero-title-wrap{
+  position:absolute;
+  /* ✏️ EDIT: naikkan/turunkan teks judul dengan ubah nilai top */
+  top:18%;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  text-align:center;
+  z-index:1;          /* BELAKANG foto */
+  pointer-events:none;
+  padding:0 16px;
+  animation:heroTitleIn 1s cubic-bezier(0.16,1,0.3,1) both;
+}
+ 
+@keyframes heroTitleIn{
+  from{opacity:0;transform:translateX(-50%) translateY(28px)}
+  to  {opacity:1;transform:translateX(-50%) translateY(0)}
+}
+ 
+/* ✏️ EDIT: besar kecil "Hi I'm Sil" */
+.hero-hi{
+  font-family:var(--font-Poppins);
+  font-weight:400;
+  font-size:clamp(48px,8.5vw,108px);
+  color:var(--purple-dark);
+  line-height:1;
+  letter-spacing:-3px;
+  display:block;
+}
+ 
+/* ✏️ EDIT: besar kecil "Visual Designer" */
+.hero-role{
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:clamp(44px,8vw,100px);
+  color:var(--purple-dark);
+  line-height:1;
+  letter-spacing:-3px;
+  display:block;
+  margin-top:-6px;
+}
+ 
+/* ════════════════════════════════
+   LAYER 3 — Foto
+   Posisi: bottom-center, memanjang
+   ke atas. z-index 3 = DI DEPAN teks,
+   di belakang fade putih.
+════════════════════════════════ */
+.hero-photo-wrap{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+ 
+.hero-photo{
+  /* ✏️ EDIT: lebar foto hero */
+  width:clamp(200px,34vw,500px);
+  display:block;
+  object-fit:cover;
+  object-position:top center;
+  filter:drop-shadow(0 24px 56px rgba(70,20,120,0.20));
+  animation:
+    heroPhotoIn 1.1s 0.15s cubic-bezier(0.16,1,0.3,1) both,
+    heroFloat   5s   2s    ease-in-out infinite;
+}
+ 
+@keyframes heroPhotoIn{
+  from{opacity:0;transform:translateY(50px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+@keyframes heroFloat{
+  0%,100%{transform:translateY(0)}
+  50%    {transform:translateY(-10px)}
+}
+ 
+/* ════════════════════════════════
+   LAYER 4 — Fade putih
+   Menutupi tepian foto yang terpotong
+   agar tidak terlihat "patah"/kotak.
+   z-index 4 = di DEPAN foto.
+════════════════════════════════ */
+ 
+/* ✏️ EDIT: ubah height fade bawah */
+.hero-fade-bottom{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:30%;
+  background:linear-gradient(
+    to top,
+    #ede5fc 0%,
+    rgba(237,229,252,0.75) 50%,
+    transparent 100%
+  );
+  pointer-events:none;
+  z-index:4;
+}
+ 
+/* ✏️ EDIT: ubah width fade kiri */
+.hero-fade-left{
+  position:absolute;
+  top:0;bottom:0;left:0;
+  width:20%;
+  background:linear-gradient(
+    to right,
+    rgba(237,229,252,0.96) 0%,
+    transparent 100%
+  );
+  pointer-events:none;
+  z-index:4;
+}
+ 
+/* ✏️ EDIT: ubah width fade kanan */
+.hero-fade-right{
+  position:absolute;
+  top:0;bottom:0;right:0;
+  width:20%;
+  background:linear-gradient(
+    to left,
+    rgba(237,229,252,0.96) 0%,
+    transparent 100%
+  );
+  pointer-events:none;
+  z-index:4;
+}
+ 
+/* ════════════════════════════════
+   LAYER 5 — Elemen UI
+   Badge, deskripsi, tombol, tagline.
+   z-index 5 = PALING DEPAN.
+   Setiap posisi sudah sesuai desain:
+   - Badge + tagline: kiri tengah-bawah
+   - Desc + tombol: kanan tengah-bawah
+════════════════════════════════ */
+.hero-ui{
+  position:absolute;inset:0;
+  z-index:5;
+  pointer-events:none; /* tombol masih bisa klik via pointer-events:auto */
+}
+ 
+/* ── Badge "Available" ──
+   Posisi: kiri, sejajar bagian tengah foto
+   ✏️ EDIT: ubah left/top untuk geser posisi
+*/
+.hero-available{
+  position:absolute;
+  left:10%;
+  /* ✏️ EDIT: top badge — makin besar = makin ke bawah */
+  top:52%;
+ 
+  pointer-events:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.82);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-radius:999px;
+  padding:9px 20px;
+  font-size:13px;
+  font-weight:500;
+  color:var(--purple-dark);
+  box-shadow:0 4px 20px rgba(100,40,180,0.13);
+  white-space:nowrap;
+  animation:heroUIIn 1s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+ 
+.hero-available-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--purple-mid);
+  flex-shrink:0;
+  animation:heroPulse 1.8s ease-in-out infinite;
+}
+ 
+@keyframes heroPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(155,89,208,0.55)}
+  50%    {box-shadow:0 0 0 7px rgba(155,89,208,0)}
+}
+ 
+/* ── Tagline "Learn, Share..." ──
+   ✏️ EDIT: left/bottom untuk posisi
+*/
+.hero-tagline{
+  position:absolute;
+  left:10%;
+  /* ✏️ EDIT: bottom tagline */
+  bottom:13%;
+  font-size:14px;
+  color:rgba(59,31,107,0.52);
+  line-height:1.55;
+  font-style:italic;
+  animation:heroUIIn 1s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+ 
+/* ── Deskripsi "Helping brands..." ──
+   Posisi: kanan, di antara judul dan tombol.
+   TIDAK sejajar dengan Hi I'm Sil.
+   ✏️ EDIT: right/top untuk geser
+*/
+.hero-desc{
+  position:absolute;
+  right:10%;
+  /* ✏️ EDIT: top desc — makin besar = makin ke bawah */
+  top:50%;
+  max-width:220px;
+  font-size:13.5px;
+  color:rgba(59,31,107,0.70);
+  line-height:1.7;
+  text-align:right;
+  animation:heroUIIn 1s 0.45s cubic-bezier(0.16,1,0.3,1) both;
+}
+ 
+/* ── Tombol "Get in Touch" ──
+   Warna: ungu tua (#3b1f6b) persis desain
+   ✏️ EDIT: right/bottom, warna background
+*/
+.hero-cta{
+  position:absolute;
+  right:15%;
+  /* ✏️ EDIT: bottom tombol */
+  bottom:14%;
+ 
+  pointer-events:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  /* ✏️ EDIT WARNA TOMBOL: ganti warna di bawah */
+  background:#2d1854;   /* ungu tua pekat, persis desain */
+  color:#fff;
+  padding:14px 20px;
+  border-radius:999px;
+  font-size:16px;
+  font-weight:600;
+  box-shadow:
+    0 10px 36px rgba(40,10,80,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  transition:background .3s,transform .3s,box-shadow .3s;
+  animation:heroUIIn 1s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+ 
+/* ── Ikon panah di dalam tombol ── */
+.hero-cta-arrow{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;height:28px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.12);
+  font-size:14px;
+  transition:transform .3s;
+  flex-shrink:0;
+}
+.hero-cta:hover .hero-cta-arrow{transform:translateX(4px)}
+.hero-cta:hover{
+  background:#3d2270;
+  transform:translateY(-3px);
+  box-shadow:0 18px 48px rgba(40,10,80,0.32);
+}
+ 
+@keyframes heroUIIn{
+  from{opacity:0;transform:translateY(18px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+ 
+/* ════════════════════════════════
+   RESPONSIVE — Mobile
+════════════════════════════════ */
+@media(max-width:768px){
+  #home{min-height:100svh}
+ 
+  /* ✏️ EDIT mobile: ukuran font */
+  .hero-hi  {font-size:clamp(36px,10vw,60px);letter-spacing:-1px}
+  .hero-role{font-size:clamp(32px,9.5vw,56px);letter-spacing:-1px}
+ 
+  /* ✏️ EDIT: teks judul naik sedikit di mobile */
+  .hero-title-wrap{top:16%}
+ 
+  /* ✏️ EDIT mobile: lebar foto */
+  .hero-photo{width:clamp(170px,70vw,300px)}
+ 
+  .hero-available{left:3%;top:54%;font-size:11px;padding:7px 14px}
+  .hero-tagline  {left:3%;bottom:10%;font-size:12px}
+  .hero-desc     {right:3%;top:52%;max-width:140px;font-size:11px}
+  .hero-cta      {right:3%;bottom:9%;padding:12px 22px;font-size:13px}
+ 
+  .hero-fade-left,
+  .hero-fade-right{width:14%}
+  .hero-fade-bottom{height:30%}
+}
+ 
+@media(max-width:480px){
+  /* Sembunyikan elemen samping di layar XS agar tidak sumpek */
+  .hero-available,.hero-desc{display:none}
+  .hero-title-wrap{top:20%}
+}
+/* ════════ HERO CSS END ════════ */
+    /* ============================================================
+       ABOUT SECTION  (style baru — lilac glass, sesuai v2)
+    ============================================================ */
+    #about {
+      padding: 120px 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 20% 20%, rgba(220,196,247,0.45), transparent 70%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(186,148,235,0.40), transparent 70%),
+        #faf7ff;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ---------- Foto / Photo frame ---------- */
+    .about-frame {
+      position: relative;
+    }
+    .about-photo-box {
+      background: #ffffff;
+      border-radius: 32px;
+      aspect-ratio: 5/4;
+      overflow: hidden;
+      padding: 12px;
+      box-shadow:
+        0 20px 60px rgba(122, 79, 199, 0.18),
+        0 4px 16px rgba(122, 79, 199, 0.08);
+      /*
+        ============================================================
+        GANTI FOTO DI SINI: ganti src di tag <img> dalam .about-photo-box
+        ============================================================
+      */
+    }
+    .about-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 22px;
+    }
+    .about-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #c9a8f0, #7a4fc7);
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+      border-radius: 22px;
+    }
+
+    /* Label nama (dipindah jadi bagian dari socials row di bawah) */
+    .about-card-label {
+      display: none; /* gaya v2 menaruh nama di samping kanan socials */
+    }
+
+    /* ---------- Bar Social Media + Nama ---------- */
+
+    .about-card-label strong { display: block; font-size: 15px; color: var(--purple-dark); }
+    .about-card-label span { font-size: 12px; color: var(--gray-text); }
+
+    /* Socials */
+    .about-socials {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .social-btn {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--purple-dark);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      transition: background 0.25s, transform 0.25s;
+      cursor: pointer;
+    }
+    .social-btn:hover { background: var(--purple-mid); transform: translateY(-3px); }
+    .social-btn svg { width: 20px; height: 20px; fill: #fff; }
+
+    
+
+    /* ---------- Teks kanan ---------- */
+    .eyebrow {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 18px;
+      color: rgba(26,19,38,0.65);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .section-title {
+      font-family: var(--font-Poppins);
+      font-weight: 400;
+      font-size: clamp(40px, 5vw, 64px);
+      color: var(--purple-dark);
+      line-height: 1.05;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+    .about-bio {
+      font-size: 15px;
+      line-height: 1.8;
+      color: rgba(26,19,38,0.80);
+      margin-bottom: 32px;
+    }
+
+
+    /* ---------- Daftar tools (chip glass) ---------- */
+    .tool-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--purple-dark);
+      border: 1px solid rgba(230,220,243,0.9);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+.tool-chip img{
+  width:58px;
+  height:58px;
+  object-fit:contain;
+}
+    .tool-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(122,79,199,0.15);
+    }
+
+    /* ---------- Experience (timeline list, bukan tabel) ---------- */
+    .exp-title {
+      font-family: var(--font-Poppins);
+      font-weight: 400;
+      font-size: 36px;
+      color: var(--purple-dark);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .exp-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-left: 2px solid #ece1fb;
+    }
+    .exp-table tr {
+      border-bottom: 1px solid #ece1fb;
+      transition: background 0.3s;
+    }
+    .exp-table tr:hover { background: rgba(236,225,251,0.35); }
+    .exp-table td { padding: 18px 12px; font-size: 14px; }
+    .exp-table td:first-child {
+      font-weight: 600;
+      color: var(--purple-dark);
+      padding-left: 24px;
+    }
+    .exp-table td:nth-child(2) { color: rgba(26,19,38,0.60); }
+    .exp-table td:last-child {
+      text-align: right;
+      color: var(--purple-mid);
+      font-weight: 600;
+    }
+
+    /* ==========================================
+   NAME & ROLE
+========================================== */
+
+.about-identity{
+   margin-top:10px;
+   text-align:right;
+}
+
+.about-name{
+   font-family:var(--font-Poppins);
+   font-size:17px;
+   font-weight:500;
+   color:var(--purple-dark);
+   margin:0;
+   line-height:1;
+}
+
+.about-role{
+   font-size:14px;
+   color:#8d859a;
+   margin-top:6px;
+}
+
+.about-role span{
+   font-style:italic;
+   color:var(--purple-dark);
+}
+    /* ============================================================
+       SKILLS SECTION
+    ============================================================ */
+    :root{
+  --bg-start:#f3eefc;
+  --bg-end:#ece6fb;
+  --pill-bg:#e8def8;
+  --pill-border:rgba(255,255,255,0.6);
+  --text-dark:#1a1430;
+  --text-muted:#9a96a8;
+  --shadow: 0 8px 20px rgba(80,40,140,0.08);
+  /* Warna icon */
+  --c-yellow:#ffd400;
+  --c-orange:#ff6a1f;
+  --c-blue:#22c2ff;
+  --c-pink:#e879f9;
+  --c-dark:#3a3346;
+  --c-green:#7ee36b;
+}
+
+/* ============================================= */
+/* 2. LAYOUT UTAMA                               */
+/* ============================================= */
+#skills{
+  padding: 20px 0;
+      background: linear-gradient(160deg, #f8f4fe 0%, #ede6fa 100%);
+      overflow: hidden;
+}
+
+.skills-showcase{
+  position:relative;
+  width:100%;
+  max-width:1200px;
+  min-height:520px;
+  margin:auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ============================================= */
+/* 3. KONTEN TENGAH (Hallo + deskripsi)          */
+/* ============================================= */
+.skills-content{
+  text-align:center;
+  max-width:640px;
+  z-index:2;
+  opacity:0;
+  transform:translateY(20px);
+  animation:fadeUp 1s ease forwards .2s;
+  padding: 0 20px;
+}
+.skills-content h1{
+  font-family:'Display',serif;
+  font-style:italic;
+  font-size:clamp(48px,7vw,84px);
+  font-weight:500;
+  margin-bottom:50px;
+  letter-spacing:-1px;
+  line-height:1;
+}
+.skills-content p{
+  font-family:'Creato Display',serif;
+  font-size:clamp(25px,1.6vw,24px);
+  line-height:1.5;
+  font-weight:400;
+}
+.skills-content .muted{color:var(--text-muted)}
+
+/* ============================================= */
+/* 4. SKILL PILLS (kapsul melayang)              */
+/*    Default = layout DESKTOP (absolute)        */
+/*    Di tablet/mobile berubah jadi grid (lihat  */
+/*    bagian 6 RESPONSIVE)                       */
+/* ============================================= */
+.pills-wrap{
+  /* Wrapper hanya aktif di mobile/tablet, di desktop transparan */
+  display:contents;
+}
+
+.skills-pill{
+  position:absolute;
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 26px 10px 10px;
+  background:var(--pill-bg);
+  border:1px solid var(--pill-border);
+  border-radius:999px;
+  box-shadow:var(--shadow);
+  font-size:16px;
+  font-weight:500;
+  color:var(--text-dark);
+  white-space:nowrap;
+  backdrop-filter:blur(6px);
+  opacity:0;
+  transform:translateY(30px) scale(.9);
+  animation:pillIn .8s cubic-bezier(.22,1,.36,1) forwards;
+  transition:transform .3s ease, box-shadow .3s ease;
+  cursor:default;
+}
+.skills-pill:hover{
+  transform:translateY(-4px) scale(1.04) !important;
+  box-shadow:0 14px 28px rgba(80,40,140,0.18);
+}
+
+/* Lingkaran icon di dalam pill */
+.skills-pill .icon{
+  width:38px;height:38px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+  flex-shrink:0;
+}
+.skills-pill .icon svg{width:20px;height:20px}
+
+/* ----- Posisi & rotasi tiap pill (DESKTOP) ----- */
+.skills-pill.p1{top:14%; left:1%;  transform:rotate(-8deg) translateY(30px) scale(.9); animation-delay:.4s}
+.skills-pill.p2{top:45%; left:-2%; transform:rotate(-4deg) translateY(30px) scale(.9); animation-delay:.6s}
+.skills-pill.p3{top:74%; left:3%;  transform:rotate(-10deg) translateY(30px) scale(.9); animation-delay:.8s}
+.skills-pill.p4{top:14%; right:1%; transform:rotate(6deg)  translateY(30px) scale(.9); animation-delay:.5s}
+.skills-pill.p5{top:45%; right:-2%;transform:rotate(2deg)  translateY(30px) scale(.9); animation-delay:.7s}
+.skills-pill.p6{top:74%; right:3%; transform:rotate(8deg)  translateY(30px) scale(.9); animation-delay:.9s}
+
+/* Animasi melayang (floating) - dijalankan setelah pillIn */
+.skills-pill.float{
+  animation: pillIn .8s cubic-bezier(.22,1,.36,1) forwards,
+             floaty 6s ease-in-out infinite 1.4s;
+}
+
+/* Warna ikon */
+.bg-yellow{background:var(--c-yellow)}
+.bg-orange{background:var(--c-orange)}
+.bg-blue  {background:var(--c-blue)}
+.bg-pink  {background:var(--c-pink)}
+.bg-dark  {background:var(--c-dark)}
+.bg-green {background:var(--c-green)}
+
+/* ============================================= */
+/* 5. KEYFRAMES ANIMASI                          */
+/* ============================================= */
+@keyframes fadeUp{
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Pill masuk - menjaga rotasi awal */
+@keyframes pillIn{
+  to{opacity:1}
+}
+
+/* Gerakan melayang naik-turun */
+@keyframes floaty{
+  0%,100%{translate:0 0}
+  50%    {translate:0 -12px}
+}
+
+/* Detak lembut pada icon */
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%    {transform:scale(1.08)}
+}
+.pill .icon{animation:pulse 3s ease-in-out infinite}
+
+/* ============================================= */
+/* 6. RESPONSIVE                                 */
+/*    - Desktop  (>1024px)  : pills absolute     */
+/*    - Tablet   (641-1024) : pills lebih kecil  */
+/*    - Mobile   (<=640px)  : pills jadi grid    */
+/*      (di atas & di bawah konten -> rapi)      */
+/* ============================================= */
+
+/* ---------- TABLET ---------- */
+/* ── SKILLS RESPONSIVE FIX ── */
+@media (max-width: 1024px) {
+  .skills-showcase { min-height: 560px; }
+  .skills-pill { font-size: 14px; padding: 8px 20px 8px 8px; gap: 10px; }
+  .skills-pill .icon { width: 32px; height: 32px; }
+
+  .skills-pill.p1 { top: 8%;  left: 2%; }
+  .skills-pill.p2 { top: 42%; left: 0%; }
+  .skills-pill.p3 { top: 78%; left: 2%; }
+  .skills-pill.p4 { top: 8%;  right: 2%; }
+  .skills-pill.p5 { top: 42%; right: 0%; }
+  .skills-pill.p6 { top: 78%; right: 2%; }
+}
+
+@media (max-width: 768px) {
+  /* Reset showcase jadi kolom vertikal */
+  .skills-showcase {
+    flex-direction: column;
+    min-height: auto;
+    gap: 16px;
+    padding: 24px 0;
+    align-items: center;
+  }
+
+  /* Semua pills-wrap jadi grid 2 kolom, full width */
+  .skills-pills-wrap {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    position: static;
+  }
+
+  /* Reset semua pill dari absolute ke static */
+  .skills-pill,
+  .skills-pill.p1,
+  .skills-pill.p2,
+  .skills-pill.p3,
+  .skills-pill.p4,
+  .skills-pill.p5,
+  .skills-pill.p6 {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    rotate: none !important;
+    width: 100%;
+    font-size: 13px;
+    padding: 10px 14px 10px 8px;
+    gap: 8px;
+    opacity: 1;
+    justify-content: flex-start;
+    white-space: normal;
+    animation: none;
+  }
+
+  .skills-pill .icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  /* Hover disable di mobile */
+  .skills-pill:hover {
+    transform: none !important;
+  }
+
+  /* Konten tengah */
+  .skills-content {
+    order: 2;
+    padding: 8px 16px;
+    max-width: 100%;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .skills-content h1 {
+    font-size: 42px;
+    margin-bottom: 16px;
+  }
+
+  .skills-content p {
+    font-size: 15px;
+  }
+
+  /* Urutan: pills atas → teks → pills bawah */
+  .skills-pills-wrap.top  { order: 1; }
+  .skills-content         { order: 2; }
+  .skills-pills-wrap.bottom { order: 3; }
+}
+
+@media (max-width: 480px) {
+  .skills-showcase {
+    padding: 20px 0;
+    gap: 12px;
+  }
+
+  .skills-pills-wrap {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .skills-pill,
+  .skills-pill.p1,
+  .skills-pill.p2,
+  .skills-pill.p3,
+  .skills-pill.p4,
+  .skills-pill.p5,
+  .skills-pill.p6 {
+    font-size: 12px;
+    padding: 8px 10px 8px 6px;
+    gap: 6px;
+  }
+
+  .skills-pill .icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .skills-content h1 { font-size: 36px; }
+  .skills-content p  { font-size: 14px; }
+}
+
+    /* ============================================================
+       PORTFOLIO: UI/UX SECTION  (style baru — kartu lilac soft, sesuai v2)
+    ============================================================ */
+    #portfolio {
+      padding: 120px 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,240,0.35), transparent 70%),
+        #faf7ff;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-header .eyebrow {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .section-header .section-title {
+      font-size: clamp(48px, 7vw, 88px);
+    }
+    /*
+      ============================================================
+      KARTU PROJECT – TAMBAH / EDIT CARD DI SINI
+      Setiap .project-card adalah 1 proyek. Salin blok HTML-nya untuk menambah.
+      ============================================================
+    */
+    .projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+.project-card {
+  background: rgba(236, 225, 251, 0.55);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 30px;
+  padding: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(122,79,199,0.10);
+  transition:
+    transform 0.5s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.project-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 60px rgba(122,79,199,0.22);
+}
+.project-card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #ffffff;
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+}
+.project-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+}
+.project-card:hover .project-card-img img {
+  transform: scale(1.05);
+}
+
+/* ── PERBAIKAN: body jadi kolom, tidak berdempetan ── */
+.project-card-body {
+  padding: 14px 8px 8px;
+  display: flex;
+  flex-direction: column;   /* ← ini kuncinya */
+  gap: 8px;
+}
+.project-card-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(14px, 3vw, 20px);
+  color: var(--purple-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+.project-tags {
+  display: flex;             /* ← fix typo "poppins: flex" */
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  font-size: clamp(11px, 2vw, 13px);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.7);
+  color: var(--purple-dark);
+  font-weight: 500;
+  border: 1px solid rgba(230,220,243,0.8);
+  white-space: nowrap;
+}
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;   /* ← 1 kolom di HP */
+    gap: 20px;
+  }
+  .project-card {
+    border-radius: 22px;
+    padding: 12px;
+  }
+  .project-card-img {
+    border-radius: 16px;
+  }
+  .project-card-body {
+    padding: 12px 6px 6px;
+    gap: 6px;
+  }
+  .project-card-title {
+    font-size: 15px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+}
+
+    /* ============================================================
+       DESIGN GRAPHICS SECTION  (Lightbox Slider)
+    ============================================================ */
+    #design {
+      padding: 120px 0;
+      background: linear-gradient(180deg, #f8f4fe 0%, #fff 100%);
+      overflow: hidden;
+    }
+    .design-slider-wrap{
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius-card);
+  width:100%;
+}
+
+    .design-slider-track {
+      display: flex;
+      transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .design-slide {
+      flex: 0 0 100%;
+      position: relative;
+    }
+    /* 
+      ============================================================
+      GAMBAR DESAIN GRAFIS: 
+      Slide pertama = gambar besar / showcase utama (tampilkan full)
+      Slide berikutnya = bisa 2 gambar berdampingan (gunakan .design-slide-pair)
+      ============================================================
+    */
+    
+.design-slide-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 0 4px;
+    }
+    .design-slide-pair img {
+      width: 100%;
+      border-radius: 16px;
+      aspect-ratio: 7/11;
+      object-fit: cover;
+    }
+
+    /* Slider controls */
+    .slider-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .slider-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--purple-dark);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .slider-btn:hover { background: var(--purple-mid); transform: scale(1.1); }
+    .slider-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+    .slider-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(155, 89, 208, 0.25);
+      pointer-events: none;
+      cursor: default;
+      transition: background 0.3s, width 0.3s;
+      flex-shrink: 0;
+    }
+    .slider-dot.active {
+      background: var(--purple-mid);
+      width: 24px;
+    }
+    /* ============================================================
+       VIDEO SECTION  (Slider with click-to-watch)
+    ============================================================ */
+    #video { padding: 60px 0; background: var(--white); }
+ 
+ /* Header — paksa tengah & ukuran besar */
+ #video .section-header {
+   text-align: center !important;
+   margin-bottom: 40px;
+ }
+ #video .eyebrow {
+   display: block;
+   text-align: center !important;
+   font-size: 15px;
+   letter-spacing: 0.08em;
+   color: var(--purple-mid, #7F77DD);
+   margin-bottom: 10px;
+ }
+ #video .section-title {
+   text-align: center !important;
+   font-size: clamp(2.4rem, 6vw, 4.5rem);
+   font-weight: 400;
+   color: var(--purple-dark, #3b1f6b);
+   line-height: 1.1;
+   margin: 0;
+ }
+
+ /* Video utama full width */
+ .video-main-wrap {
+   width: 100%;
+   border-radius: 16px;
+   overflow: hidden;
+   background: #000;
+   margin-bottom: 40px;
+ }
+ .video-main-wrap video {
+   width: 100%;
+   display: block;
+   max-height: 90vh;   /* ubah dari 70vh jadi 90vh */
+  min-height: 500px;  /* tambahkan baris ini */
+   object-fit: cover;
+ }
+
+ /* Slider */
+ .video-slider-wrap {
+   overflow: hidden;
+   width: 100%;
+   cursor: grab;
+   user-select: none;
+ }
+ .video-slider-wrap:active { cursor: grabbing; }
+
+ .video-slider-track {
+   display: flex;
+   gap: 20px;
+   transition: transform 0.52s cubic-bezier(0.16,1,0.3,1);
+   will-change: transform;
+   padding: 8px 2px 14px;
+ }
+
+ /* Card — 2 per slide */
+ .video-card {
+   flex: 0 0 calc(50% - 10px);
+   border-radius: 20px;
+   overflow: hidden;
+   background: var(--card-bg, #fff);
+   border: 1px solid var(--card-border, #ebebeb);
+   transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+ }
+ .video-card:hover { transform: translateY(-6px); }
+
+ /* Thumbnail portrait */
+ .video-thumb {
+   width: 100%;
+   aspect-ratio: 9 / 16;
+   overflow: hidden;
+   background: #c8b0e8;
+   position: relative;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+ .video-thumb video {
+   width: 100%; height: 100%;
+   object-fit: cover; display: block;
+ }
+
+ /* Play overlay */
+ .video-play-btn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(59,31,107,0.22);
+  transition: opacity 0.3s;
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.video-play-btn.playing {
+  opacity: 0;
+}
+
+.video-card:hover .video-play-btn.playing {
+  opacity: 1;
+}
+ .play-circle {
+   width: 56px; height: 56px; border-radius: 50%;
+   background: rgba(255,255,255,0.92);
+   display: flex; align-items: center; justify-content: center;
+   pointer-events: none;
+ }
+ .play-circle svg { width: 24px; height: 24px; fill: #3b1f6b; margin-left: 3px; }
+
+ .video-card-body { padding: 14px 18px 18px; }
+ .video-card-title { font-weight: 600; font-size: 15px; color: var(--purple-dark,#3b1f6b); margin: 0 0 5px; }
+ .video-card-sub   { font-size: 13px; color: var(--gray-text,#888); margin: 0; }
+
+ /* Dots only */
+ .video-dots {
+   display: flex;
+   justify-content: center;
+   gap: 8px;
+   margin-top: 20px;
+ }
+ .video-dot {
+   width: 8px; height: 8px; border-radius: 50%;
+   background: #ccc; cursor: pointer;
+   transition: background 0.3s, transform 0.3s;
+ }
+ .video-dot.active { background: var(--purple-dark,#3b1f6b); transform: scale(1.4); }
+    /* ============================================================
+       CONTACT / FOOTER SECTION
+    ============================================================ */
+    #contact {
+      padding: 120px 0 0;
+      background: var(--white);
+      text-align: center;
+    }
+    .contact-title {
+      font-family: var(--font-Poppins);
+      font-weight: 500;
+      font-size: clamp(36px, 7vw, 80px);
+      color: var(--purple-dark);
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .contact-sub {
+      font-size: 16px;
+      color: var(--gray-text);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 0;
+      border-top: 1px solid var(--card-border);
+      margin-top: 80px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 14px; color: var(--purple-mid); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--purple-dark); }
+    .footer-copy { font-size: 13px; color: var(--gray-text); }
+
+    .footer-big-name {
+  background: linear-gradient(160deg, #e8d8f8 0%, #c8a0f0 60%, #b07fe0 100%);
+  padding: 30px 24px;
+  overflow: hidden;
+  width: 100%;
+}
+.footer-big-name span {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(48px, 10vw, 140px);
+  color: var(--purple-mid);
+  opacity: 0.7;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+}
+
+/* Fix mobile: scale agar tidak terpotong */
+@media (max-width: 600px) {
+  .footer-big-name {
+    padding: 28px 0;
+    overflow: hidden;
+  }
+  .footer-big-name span {
+    font-size: clamp(32px, 11vw, 56px);
+    white-space: nowrap;
+    text-align: center;
+    display: block;
+    padding: 0 16px;
+  }
+}
+
+    .btn-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--purple-dark);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 10px 36px rgba(40,10,80,0.28);
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+}
+.btn-dark:hover {
+  background: #3d2270;
+  transform: translateY(-3px);
+  box-shadow: 0 18px 48px rgba(40,10,80,0.32);
+}
+.btn-dark-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  font-size: 14px;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.btn-dark:hover .btn-dark-arrow {
+  transform: translateX(4px);
+}
+    /* ============================================================
+       YOUTUBE THUMBNAIL + CLICK TO OPEN STYLES
+    ============================================================ */
+
+    /* Video utama — thumbnail 16:9 full width */
+    .yt-main-thumb {
+      display: block;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+    }
+    .yt-main-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .yt-main-thumb:hover img {
+      transform: scale(1.03);
+      opacity: 0.85;
+    }
+
+    /* Thumbnail shorts di card slider — portrait 9:16 */
+    .yt-short-thumb {
+      display: block;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      cursor: pointer;
+      background: #1a0a30;
+      border-radius: 12px 12px 0 0;
+    }
+    .yt-short-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .yt-short-thumb:hover img {
+      transform: scale(1.03);
+      opacity: 0.8;
+    }
+
+    /* Overlay play button */
+    .yt-play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.3s;
+    }
+    .yt-main-thumb:hover .yt-play-overlay,
+    .yt-short-thumb:hover .yt-play-overlay {
+      background: rgba(0,0,0,0.38);
+    }
+    .yt-play-btn-big,
+    .yt-play-btn-sm {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+      transition: transform 0.25s;
+    }
+    .yt-main-thumb:hover .yt-play-btn-big,
+    .yt-short-thumb:hover .yt-play-btn-sm {
+      transform: scale(1.12);
+    }
+    .yt-watch-label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+    }
+
+    /* video-thumb tanpa tinggi fixed (biar yt-short-thumb yang tentukan) */
+    .video-thumb {
+      overflow: hidden;
+      border-radius: 12px 12px 0 0;
+    }
+
+    /* ============================================================
+       LIGHTBOX
+    ============================================================ */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(20,10,40,0.92);
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+    }
+    .lightbox-inner img { max-width: 90vw; max-height: 85vh; border-radius: 12px; }
+    .lightbox-close {
+      position: absolute;
+      top: -40px; right: 0;
+      background: none; border: none; color: #fff;
+      font-size: 28px; cursor: pointer; line-height: 1;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+/* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    /* ── Navbar mobile ── */
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-inner .nav-link { display: none; }
+
+      /* Section lain tetap */
+      .about-grid { grid-template-columns: 1fr; }
+      .about-card-label { right: 0; bottom: -10px; }
+      .about-socials { justify-content: center; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .video-card { flex: 0 0 85%; }
+      .video-laptop-showcase { padding: 24px; }
+      .footer-nav { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+
+    /* ── HERO TABLET 481–768px ── */
+    @media (max-width: 768px) {
+      #home { min-height: 100svh; }
+
+      .hero-photo-wrap {
+        bottom: auto;
+        top: var(--nav-h);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 68svh;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .hero-photo {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        animation: heroPhotoIn 1.1s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+      }
+
+      .hero-title-wrap {
+        top: auto;
+        bottom: 20%;
+        transform: translateX(-50%);
+        z-index: 6;
+        text-align: center;
+        width: 92%;
+        padding: 0 8px;
+      }
+
+      .hero-hi {
+        font-size: clamp(38px, 11vw, 64px);
+        letter-spacing: -1px;
+        line-height: 1.05;
+      }
+
+      .hero-role {
+        font-size: clamp(34px, 10vw, 58px);
+        letter-spacing: -1px;
+        line-height: 1.05;
+      }
+
+      .hero-fade-bottom {
+        height: 45%;
+        background: linear-gradient(
+          to top,
+          #ede5fc 0%,
+          rgba(237,229,252,0.90) 40%,
+          transparent 100%
+        );
+      }
+
+      .hero-fade-left,
+      .hero-fade-right { width: 10%; }
+
+      .hero-available { display: none; }
+      .hero-desc      { display: none; }
+
+      .hero-tagline {
+        left: 5%;
+        bottom: 5%;
+        font-size: 12px;
+        z-index: 6;
+      }
+
+      .hero-cta {
+        right: 5%;
+        bottom: 5%;
+        padding: 12px 20px;
+        font-size: 13px;
+        z-index: 6;
+      }
+    }
+
+    /* ── HERO MOBILE ≤ 480px (style garryaudie) ── */
+    @media (max-width: 480px) {
+      .section-title { font-size: 32px; }
+
+      #home { min-height: 100svh; overflow: hidden; }
+
+      .hero-photo-wrap {
+        top: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: 100svh;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .hero-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        filter: none;
+        animation: heroPhotoIn 1.1s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+      }
+
+      .hero-fade-bottom {
+        height: 55%;
+        background: linear-gradient(
+          to top,
+          rgba(30,10,70,0.75) 0%,
+          rgba(80,30,140,0.40) 40%,
+          transparent 100%
+        );
+        z-index: 4;
+      }
+
+      .hero-fade-left,
+      .hero-fade-right { display: none; }
+
+      .hero-title-wrap {
+        top: auto;
+        bottom: 22%;
+        transform: translateX(-50%);
+        z-index: 6;
+        text-align: left;
+        padding: 0 20px;
+        width: 100%;
+        pointer-events: none;
+      }
+
+      .hero-hi {
+  font-family: 'Poppins', sans-serif; /* tambah baris ini */
+  font-size: clamp(13px, 5vw, 20px);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.85);
+  font-style: italic;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hero-role {
+  font-family: 'Playfair Display'; /* tambah baris ini */
+  font-size: clamp(60px, 18vw, 86px);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -2px;
+  color: #ffffff;
+  line-height: 0.95;
+  display: block;
+  margin-top: 0;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+      .hero-tagline {
+        left: 20px;
+        bottom: 28px;
+        font-size: 11px;
+        color: rgba(255,255,255,0.60);
+        z-index: 6;
+      }
+
+      .hero-cta {
+        right: 20px;
+        bottom: 24px;
+        padding: 11px 18px;
+        font-size: 13px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: #fff;
+        z-index: 6;
+        box-shadow: none;
+      }
+
+      .hero-available { display: none; }
+      .hero-desc      { display: none; }
+    }
+
+    /* ── MOBILE SUPER KECIL ≤ 360px ── */
+    @media (max-width: 360px) {
+      .hero-hi   { font-size: 12px; }
+      .hero-role { font-size: clamp(44px, 16vw, 60px); }
+      .hero-title-wrap { bottom: 24%; }
+    }
+  </style>
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#home"      class="nav-link active">Home</a>
+    <a href="#about"     class="nav-link">About</a>
+    <a href="#portfolio" class="nav-link">Portofolio</a>
+    <a href="#contact"   class="nav-link">Contact</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home"      class="nav-link" onclick="closeMobileMenu()">Home</a>
+  <a href="#about"     class="nav-link" onclick="closeMobileMenu()">About</a>
+  <a href="#portfolio" class="nav-link" onclick="closeMobileMenu()">Portofolio</a>
+  <a href="#contact"   class="nav-link" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="home">
+ 
+  <!-- LAYER 1: Blob ungu berlapis -->
+  <div class="hero-blob-wrap" aria-hidden="true">
+    <div class="hero-blob-left"></div>
+    <div class="hero-blob-mid"></div>
+    <div class="hero-blob-right"></div>
+  </div>
+ 
+  <!-- LAYER 2: Teks judul (di BELAKANG foto) -->
+  <div class="hero-title-wrap" aria-hidden="true">
+    <!-- ✏️ EDIT teks judul -->
+    <span class="hero-hi">Hi I'm Sil</span>
+    <span class="hero-role">Visual Designer</span>
+  </div>
+ 
+  <!-- LAYER 3: Foto (di atas teks, di bawah fade putih) -->
+  <div class="hero-photo-wrap">
+    <!--
+      ✏️ EDIT FOTO:
+      Ganti src="your-photo.png" dengan nama file foto kamu.
+      Foto PNG transparan = hasil terbaik.
+      Kalau foto biasa (background putih/polos), fade putih
+      di bawah akan menutupi bagian yang terpotong otomatis.
+    -->
+    <img
+      class="hero-photo"
+      src="images\VOLUNTEER (1350 x 1350 px) (2).png"
+      alt="Sil Milda Aprilia"
+      onerror="this.style.display='none'"
+    />
+  </div>
+ 
+  <!-- LAYER 4: Fade putih — penutup tepian foto yang terpotong -->
+  <div class="hero-fade-left"   aria-hidden="true"></div>
+  <div class="hero-fade-right"  aria-hidden="true"></div>
+  <div class="hero-fade-bottom" aria-hidden="true"></div>
+ 
+  <!-- LAYER 5: Elemen UI — badge, tagline, desc, tombol -->
+  <div class="hero-ui">
+ 
+    <!-- Badge available — kiri tengah -->
+    <div class="hero-available">
+      <span class="hero-available-dot"></span>
+      <!-- ✏️ EDIT teks badge -->
+      Available for new opportunities
+    </div>
+ 
+    <!-- Tagline — kiri bawah -->
+    <p class="hero-tagline">
+      <!-- ✏️ EDIT tagline -->
+      Learn, Share,<br>Impact and Earn
+    </p>
+ 
+    <!-- Deskripsi — kanan (di bawah judul, tidak sejajar) -->
+    <p class="hero-desc">
+      <!-- ✏️ EDIT deskripsi -->
+      Helping brands stand out through creative graphic design and engaging video content.
+    </p>
+ 
+    <!-- Tombol Get in Touch — kanan bawah -->
+    <!--
+      ✏️ EDIT href:
+      WhatsApp → https://wa.me/628xxxxxxxxxx
+      Email    → mailto:email@kamu.com
+      Section  → #contact
+    -->
+    <a href="https://drive.google.com/file/d/1IlD42zD0oOjs_-6BUFtx-R_kq2lf3Tby/view?usp=sharing" class="hero-cta">
+      <span class="hero-cta-arrow">→</span>
+      Show My CV
+    </a>
+ 
+  </div><!-- /hero-ui -->
+ 
+</section>
+<!-- ════ HERO HTML END ════ -->
+<!-- ============================================================
+     ABOUT
+============================================================ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <!-- Photo col -->
+      <div class="about-frame reveal">
+        <div class="about-photo-box">
+          <!-- 
+            ============================================================
+            FOTO ABOUT ME: ganti src di bawah
+            ============================================================
+          -->
+          <img src="https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-d6rmantd4v5h.jpg" alt="Sil Milda Aprilia"
+               onerror="this.outerHTML='<div class=\'about-photo-placeholder\'>Tambahkan foto di sini</div>'" />
+        </div>
+        <div class="about-card-label">
+          <strong>Sil Milda Aprilia</strong>
+          <span>Editor &amp; Designer</span>
+        </div>
+
+        <!-- 
+          ============================================================
+          SOCIAL MEDIA LINKS – ganti href dengan URL profil kamu
+          ============================================================
+        -->
+        <div class="about-socials">
+          <!-- TikTok -->
+          <a href=" https://www.tiktok.com/@silmildaaprilia?_r=1&_t=ZS-92VjnBbkhXh" target="_blank" class="social-btn" title="TikTok">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.87a8.18 8.18 0 004.78 1.52V6.94a4.85 4.85 0 01-1.01-.25z"/>
+            </svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href=" https://www.linkedin.com/in/silmildaaprilia?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="social-btn" title="LinkedIn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+          <!-- Instagram -->
+          <a href=" https://www.instagram.com/silmilda.aprilia23?igsh=cHJvZGYwbm5pNDI=" target="_blank" class="social-btn" title="Instagram">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+            </svg>
+          </a>
+        </div>
+        <div class="about-identity">
+          <h3 class="about-name">Sil Milda Aprilia</h3>
+          <p class="about-role">
+            Editor & <span>Visual Designer</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Text col -->
+      <div class="reveal">
+        <span class="eyebrow">/Who Am I</span>
+        <h2 class="section-title">About Me</h2>
+        <p class="about-bio">
+          I am an Agribusiness student with a creative mindset,  currently focused on improving my graphic design and  visual communication skills. I am passionate about  developing innovative and aesthetic design ideas that  align with brand needs. I have a strong learning spirit,  am open to feedback, and am accustomed to working  collaboratively in teams to create visual concepts that  are impactful, emotionally engaging, and  communicative 
+        </p>
+
+        <!-- Tools -->
+        <div class="tools-row">
+
+          <span class="tool-chip">
+            <img src="https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-ef1dmvvwrc6g.jpg" alt="Canva">
+          </span>
+        
+          <span class="tool-chip">
+            <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-hbqhojtfqufl.jpg" alt="CapCut">
+          </span>
+        
+          <span class="tool-chip">
+            <img src="  https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-oua7triwhgrz.jpg" alt="Figma">
+          </span>
+        
+          <span class="tool-chip">
+            <img src=" images\logo 5.png" alt="Google Workspace">
+          </span>
+        
+          <span class="tool-chip">
+            <img src="images\logo (2).png" alt="Microsoft Office">
+          </span>
+        
+        </div>
+
+        <!-- Experience -->
+        <h3 class="exp-title">Experience</h3>
+        <table class="exp-table">
+          <tr>
+            <td>Graphic Design</td>
+            <td>Ghina Printing</td>
+            <td>2024</td>
+          </tr>
+          <tr>
+            <td>PDD Division Committee</td>
+            <td>Volunteer TentFestival. Untirta</td>
+            <td>2025</td>
+          </tr>
+          <tr>
+            <td>UI &amp; UX Design</td>
+            <td>BootCamp GDG</td>
+            <td>2025</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SKILLS
+============================================================ -->
+<section id="skills">
+  <div class="container">
+
+    <div class="skills-showcase">
+
+      <!-- Pills kiri -->
+      <div class="skills-pills-wrap top">
+
+        <div class="skills-pill float p1">
+          <span class="icon bg-yellow">⚡</span>
+          Time Management
+        </div>
+
+        <div class="skills-pill float p2">
+          <span class="icon bg-blue">⚡</span>
+          Video Editing
+        </div>
+
+        <div class="skills-pill float p4">
+          <span class="icon bg-orange">⚡</span>
+          Communication Skills
+        </div>
+
+        <div class="skills-pill float p5">
+          <span class="icon bg-pink">⚡</span>
+          Graphic Design
+        </div>
+
+      </div>
+
+      <!-- Konten tengah -->
+      <div class="skills-content reveal">
+
+        <span class="eyebrow">Hallo!</span>
+
+        <p class="skills-tagline">
+          Turning creative ideas into impactful visual stories through
+          high-quality graphic assets and engaging video content.
+        </p>
+
+      </div>
+
+      <!-- Pills kanan -->
+      <div class="skills-pills-wrap bottom">
+
+        <div class="skills-pill float p3">
+          <span class="icon bg-dark">⚡</span>
+          Critical Thinking
+        </div>
+
+        <div class="skills-pill float p6">
+          <span class="icon bg-green">⚡</span>
+          AI Tools
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     PORTFOLIO – UI/UX PROJECTS
+============================================================ -->
+<section id="portfolio">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">/Bets Projects/UI</span>
+      <h2 class="section-title">Selected Works</h2>
+    </div>
+
+    <!--
+      ============================================================
+      KARTU PROJECT – TAMBAH / EDIT CARD DI SINI
+      Salin satu blok <div class="project-card">…</div> untuk menambah proyek baru.
+      Ganti:
+        - src gambar di <img src="...">
+        - Judul di .project-card-title
+        - Tag di .project-tags > .tag
+      ============================================================
+    -->
+    <div class="projects-grid">
+
+      <!-- Card 1 -->
+      <div class="project-card reveal">
+        <div class="project-card-img">
+          <!-- Gambar proyek 2 -->
+          <img src="images\MacBook 13.png" alt="Web Profile Budidaya Jamur Tiram"
+               onerror="this.style.display='none'" />
+        </div>
+        <div class="project-card-body">
+          <p class="project-card-title">Web Profile</p>
+          <div class="project-tags">
+            <span class="tag">Back End</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag">Project Tasks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="project-card reveal">
+        <div class="project-card-img">
+          <!-- Gambar proyek 2 -->
+          <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-i7j5eyfkospq.jpg" alt="Application – Mobile Food App"
+               onerror="this.style.display='none'" />
+        </div>
+        <div class="project-card-body">
+          <p class="project-card-title">Application</p>
+          <div class="project-tags">
+            <span class="tag">Mobile App</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag">Bootcamp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="project-card reveal">
+        <div class="project-card-img">
+          <!-- Gambar proyek 3 -->
+          <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-tnb82s2h63ij.jpg" alt="Web Profile – Jelajah Mart"
+               onerror="this.style.display='none'" />
+        </div>
+        <div class="project-card-body">
+          <p class="project-card-title">Application</p>
+          <div class="project-tags">
+            <span class="tag">Back End</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag">Digital Business</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="project-card reveal">
+        <div class="project-card-img">
+          <!-- Gambar proyek 4 -->
+          <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-japplj9x1xwt.jpg" alt="Application – Portfolio"
+               onerror="this.style.display='none'" />
+        </div>
+        <div class="project-card-body">
+          <p class="project-card-title">Web Portofolio</p>
+          <div class="project-tags">
+            <span class="tag">Mobile App</span>
+            <span class="tag">UI/UX</span>
+            <span class="tag"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 
+        ============================================================
+        TAMBAH CARD BARU DI SINI – salin blok di atas
+        ============================================================
+      -->
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DESIGN GRAPHICS – Slider
+============================================================ -->
+<section id="design">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="eyebrow">/Bets Projects/Design Graphics</span>
+      <h2 class="section-title">Design Graphics</h2>
+    </div>
+
+    <div class="reveal">
+      <div class="design-slider-wrap">
+        <div class="design-slider-track" id="designTrack">
+
+          <!--
+            ============================================================
+            SLIDE 1 – Gambar utama / showcase besar (full width)
+            Ganti src dengan gambar desain grafis kamu
+            Klik gambar akan membuka lightbox
+            ============================================================
+          -->
+          <div class="design-slide">
+            <img src="https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-vydlywrlchyd.jpg" alt="Design Graphics Showcase"
+                 onclick="openLightbox(this.src)"
+                 style="cursor:zoom-in;"
+                 onerror="this.style.background='#c8b0e8'; this.style.minHeight='400px'; this.removeAttribute('onerror')" />
+          </div>
+
+          <!--
+            ============================================================
+            SLIDE 2 – Pasang 2 gambar berdampingan
+            Ukuran tiap gambar ideal: 600×600 px (square)
+            ============================================================
+          -->
+          <div class="design-slide">
+            <div class="design-slide-pair">
+              <img src="https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-hsystlqnjnk4.jpg" alt="Design 1" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#b07fe0'; this.removeAttribute('onerror')" />
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-3y66kg96wjhu.jpg" alt="Design 2" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#9b59d0'; this.removeAttribute('onerror')" />
+            </div>
+          </div>
+
+          <!--
+            ============================================================
+            SLIDE 3 – Pasang 2 gambar lagi
+            ============================================================
+          -->
+          <div class="design-slide">
+            <div class="design-slide-pair">
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-god8c7o9lyju.jpg" alt="Design 3" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#c89ef5'; this.removeAttribute('onerror')" />
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-fzidq34iqsmt.jpg" alt="Design 4" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#a06cd5'; this.removeAttribute('onerror')" />
+            </div>
+          </div>
+
+          <!--
+            ============================================================
+            TAMBAH SLIDE BARU – salin salah satu blok .design-slide di atas
+            ============================================================
+          -->
+          <div class="design-slide">
+            <div class="design-slide-pair">
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-005t0w7drc8x.jpg" alt="Design 3" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#c89ef5'; this.removeAttribute('onerror')" />
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-m933ray70oi9.jpg" alt="Design 4" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#a06cd5'; this.removeAttribute('onerror')" />
+            </div>
+          </div>
+          
+          <!--
+            ============================================================
+            SLIDE 3 – Pasang 2 gambar lagi
+            ============================================================
+          -->
+          <div class="design-slide">
+            <div class="design-slide-pair">
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-4x0ift24au6z.jpg" alt="Design 3" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#c89ef5'; this.removeAttribute('onerror')" />
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-h6fi0ohufalp.jpg" alt="Design 4" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#a06cd5'; this.removeAttribute('onerror')" />
+            </div>
+          </div>
+
+                    <!--
+            ============================================================
+            SLIDE 3 – Pasang 2 gambar lagi
+            ============================================================
+          -->
+          <div class="design-slide">
+            <div class="design-slide-pair">
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-rxh4kpao5zim.jpg" alt="Design 3" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#c89ef5'; this.removeAttribute('onerror')" />
+              <img src=" https://cdn-media-uploads.flaspayku.biz.id/data.php?view=flaslink-zqnx2mj9kjr0.jpg" alt="Design 4" onclick="openLightbox(this.src)" style="cursor:zoom-in;"
+                   onerror="this.style.background='#a06cd5'; this.removeAttribute('onerror')" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-controls">
+        <div class="slider-controls">
+          <div class="slider-dots" id="designDots"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIDEO SECTION
+============================================================ -->
+<section id="video">
+<div class="container">
+ 
+  <!-- HEADER TENGAH -->
+  <div class="section-header reveal">
+    <span class="eyebrow">/Best Projects/Video</span>
+    <h2 class="section-title">Video Works</h2>
+  </div>
+
+  <!-- VIDEO UTAMA — full width, klik buka YouTube -->
+  <div class="video-main-wrap">
+    <a class="yt-main-thumb" href="https://youtu.be/PpbR5qZh194" target="_blank" rel="noopener">
+      <img
+        src="https://img.youtube.com/vi/PpbR5qZh194/maxresdefault.jpg"
+        onerror="this.src='https://img.youtube.com/vi/PpbR5qZh194/hqdefault.jpg'"
+        alt="Video Utama"
+      />
+      <div class="yt-play-overlay">
+        <div class="yt-play-btn-big">
+          <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+        </div>
+        <span class="yt-watch-label">Tonton di YouTube</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- SLIDER PORTRAIT -->
+  <div class="video-slider-wrap" id="videoWrap">
+    <div class="video-slider-track" id="videoTrack">
+
+      <!-- Card 1: Shorts EMdw2mKVMB0 -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/EMdw2mKVMB0" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/EMdw2mKVMB0/hqdefault.jpg"
+              alt="Video Tutorials"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">Video Tutorials</p>
+          <p class="video-card-sub">Video content for GSA sign up</p>
+        </div>
+      </div>
+
+      <!-- Card 2: Shorts jHRA15wx4yQ -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/jHRA15wx4yQ" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/jHRA15wx4yQ/hqdefault.jpg"
+              alt="Video Coming Soon"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">Video Coming Soon</p>
+          <p class="video-card-sub">MTR event at BMI as a media team</p>
+        </div>
+      </div>
+
+      <!-- Card 3: Shorts hEbHoEUL5Gs -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/hEbHoEUL5Gs" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/hEbHoEUL5Gs/hqdefault.jpg"
+              alt="MOMB Video Assignments"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">MOMB Video Assignments</p>
+          <p class="video-card-sub">Creative videos for MOMB group content</p>
+        </div>
+      </div>
+
+      <!-- Card 4: Shorts PD1ncw6rPmQ -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/PD1ncw6rPmQ" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/PD1ncw6rPmQ/hqdefault.jpg"
+              alt="Video Coming Soon 2"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">Video Coming Soon</p>
+          <p class="video-card-sub">MTR event at BMI as a media team</p>
+        </div>
+      </div>
+
+      <!-- Card 5: Shorts IzUNA4IWikU -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/IzUNA4IWikU" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/IzUNA4IWikU/hqdefault.jpg"
+              alt="Video Tutorials 2"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">Video Tutorials</p>
+          <p class="video-card-sub">Video content for GSA sign up</p>
+        </div>
+      </div>
+
+      <!-- Card 6: Shorts zFTbLz_QwIY -->
+      <div class="video-card">
+        <div class="video-thumb">
+          <a class="yt-short-thumb" href="https://youtube.com/shorts/zFTbLz_QwIY" target="_blank" rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/zFTbLz_QwIY/hqdefault.jpg"
+              alt="Project content video"
+            />
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn-sm">
+                <svg viewBox="0 0 68 48" width="44" height="31"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#ff0000"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="video-card-body">
+          <p class="video-card-title">Project content video</p>
+          <p class="video-card-sub"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="video-dots" id="videoDots"></div>
+
+</div>
+</section>
+
+<!-- ============================================================
+     CONTACT / FOOTER
+============================================================ -->
+<section id="contact">
+  <div class="container">
+    <div class="reveal">
+      <h2 class="contact-title">Let's Make It Happen</h2>
+      <p class="contact-sub">Have an exciting project or want to level up your social media visuals? Let's team up and create something amazing together</p>
+      <!-- 
+        ============================================================
+        Ganti href dengan link WhatsApp / email / form kamu
+        Contoh WhatsApp: https://wa.me/628xxxxxxxx
+        ============================================================
+      -->
+      <a href="https://mail.google.com/mail/u/0/?fs=1&to=silmildaaprilia23@gmail.com&tf=cm" class="btn-dark">
+        <span class="btn-dark-arrow">→</span>
+        Get in Touch
+      </a>
+
+    <div class="footer-nav reveal">
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#portfolio">Portofolio</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="footer-copy">2026 Sil Milda Aprilia All rights reserved</p>
+    </div>
+  </div>
+
+  <div class="footer-big-name">
+    <span>Sil Milda Aprilia</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     LIGHTBOX
+============================================================ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img src="" alt="Preview" id="lightboxImg" />
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ─── Navbar scroll + active link ─── */
+const nav = document.getElementById('mainNav');
+const navLinks = document.querySelectorAll('nav .nav-link');
+const sections = document.querySelectorAll('section[id]');
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 30);
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+  });
+});
+
+/* ─── Mobile hamburger ─── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+
+function closeMobileMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+/* ─── Scroll reveal ─── */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* ─── Design Graphics Slider ─── */
+let designIdx = 0;
+const designTrack = document.getElementById('designTrack');
+const designSlides = designTrack.querySelectorAll('.design-slide');
+const designDotsWrap = document.getElementById('designDots');
+
+designSlides.forEach((_, i) => {
+  const d = document.createElement('span');
+  d.className = 'slider-dot' + (i === 0 ? ' active' : '');
+  designDotsWrap.appendChild(d);
+});
+
+function updateDesignSlider() {
+  designTrack.style.transform = `translateX(-${designIdx * 100}%)`;
+  designDotsWrap.querySelectorAll('.slider-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === designIdx);
+  });
+}
+
+function slideDesign(dir) {
+  designIdx = (designIdx + dir + designSlides.length) % designSlides.length;
+  updateDesignSlider();
+}
+
+function gotoDesign(i) {
+  designIdx = i;
+  updateDesignSlider();
+}
+
+/* ─── Video Slider ─── */
+let videoIdx = 0;
+const videoTrack = document.getElementById('videoTrack');
+const videoCards = videoTrack.querySelectorAll('.video-card');
+const videoDotsWrap = document.getElementById('videoDots');
+
+const PER_SLIDE = 2;
+const GAP_VIDEO = 20; // px, sesuaikan dengan gap di CSS
+
+/* Hitung total slide (setiap slide tampil 2 card) */
+const totalVideoSlides = Math.ceil(videoCards.length / PER_SLIDE);
+
+/* Buat dots sebanyak jumlah slide, bukan jumlah card */
+for (let i = 0; i < totalVideoSlides; i++) {
+  const d = document.createElement('span');
+  d.className = 'slider-dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => gotoVideo(i));
+  videoDotsWrap.appendChild(d);
+}
+
+function updateVideoSlider() {
+  const wrapW = videoTrack.parentElement.offsetWidth;
+  const cardW = (wrapW - GAP_VIDEO) / 2; // lebar 1 card
+  const offset = videoIdx * (cardW + GAP_VIDEO) * PER_SLIDE;
+  videoTrack.style.transform = `translateX(-${offset}px)`;
+
+  videoDotsWrap.querySelectorAll('.slider-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === videoIdx);
+  });
+}
+
+function slideVideo(dir) {
+  videoIdx = Math.min(Math.max(videoIdx + dir, 0), totalVideoSlides - 1);
+  updateVideoSlider();
+}
+
+function gotoVideo(i) {
+  videoIdx = Math.min(Math.max(i, 0), totalVideoSlides - 1);
+  updateVideoSlider();
+}
+
+window.addEventListener('resize', updateVideoSlider);
+
+/* ─── Open video URL (untuk card yang pakai data-url) ─── */
+function openVideo(card) {
+  const url = card.getAttribute('data-url');
+  if (url && url !== '#') window.open(url, '_blank');
+}
+
+/* ─── Lightbox ─── */
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+/* ─── Swipe helper ─── */
+function makeSwipeable(wrap, slideFn) {
+  if (!wrap) return;
+  let startX = 0, endX = 0, dragging = false, wasDragged = false;
+
+  wrap.addEventListener('touchstart', e => {
+    startX = endX = e.touches[0].clientX;
+    wasDragged = false;
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', e => {
+    endX = e.touches[0].clientX;
+    if (Math.abs(endX - startX) > 8) wasDragged = true;
+  }, { passive: true });
+
+  wrap.addEventListener('touchend', () => {
+    if (!wasDragged) return;
+    if (Math.abs(startX - endX) > 40) slideFn(startX > endX ? 1 : -1);
+    wasDragged = false;
+  });
+
+  wrap.addEventListener('mousedown', e => {
+    startX = endX = e.clientX;
+    dragging = true;
+    wasDragged = false;
+    wrap.style.cursor = 'grabbing';
+    wrap.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    endX = e.clientX;
+    if (Math.abs(endX - startX) > 8) wasDragged = true;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    wrap.style.cursor = '';
+    wrap.style.userSelect = '';
+    if (!wasDragged) return;
+    if (Math.abs(startX - endX) > 40) slideFn(startX > endX ? 1 : -1);
+    setTimeout(() => { wasDragged = false; }, 0);
+  });
+
+  wrap.addEventListener('click', e => {
+    if (wasDragged) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+}
+
+makeSwipeable(document.querySelector('.design-slider-wrap'), slideDesign);
+makeSwipeable(document.querySelector('.video-slider-wrap'), slideVideo);
+</script>
+</body>
+</html>
